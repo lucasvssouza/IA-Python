@@ -1,3 +1,8 @@
+import os
+import nltk
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.tokenize import word_tokenize
 from pathlib import Path
 from typing import Optional
 from llama_index.llms.groq import Groq
@@ -8,6 +13,25 @@ from dotenv import load_dotenv
 load_dotenv()
 
 llm = Groq(model="openai/gpt-oss-120b", temperature=0.0)
+
+NLP_PREPROCESSING = os.getenv("NLP_PREPROCESSING", "false").lower() == "true"
+NLP_LANGUAGE = os.getenv("NLP_LANGUAGE", "portuguese").lower()
+
+if NLP_PREPROCESSING:
+    try:
+        nltk.data.find("tokenizers/punkt")
+        nltk.data.find("corpora/stopwords")
+        nltk.data.find("corpora/wordnet")
+        nltk.data.find("corpora/omw-1.4")
+        nltk.data.find("tokenizers/punkt_tab")  
+    except LookupError:
+        print("Baixando recursos necessários do NLTK...")
+        nltk.download("punkt", quiet=True)
+        nltk.download("stopwords", quiet=True)
+        nltk.download("wordnet", quiet=True)
+        nltk.download("omw-1.4", quiet=True)
+        nltk.download("punkt_tab", quiet=True)
+        print("Recursos do NLTK baixados com sucesso.")
 
 
 class Invoice(BaseModel):
@@ -25,6 +49,18 @@ class Response(BaseModel):
     resultado: Optional[Invoice] | str = None
 
 
+def preprocessar_texto_nlp(texto: str) -> str:
+    stop_words = set(stopwords.words(NLP_LANGUAGE))
+    lemmatizer = WordNetLemmatizer()
+    tokens = word_tokenize(texto.lower(), language=NLP_LANGUAGE)
+    tokens_processados = [
+        lemmatizer.lemmatize(palavra)
+        for palavra in tokens
+        if palavra.isalpha() and palavra not in stop_words
+    ]
+    return " ".join(tokens_processados)
+
+
 def email_arquivo(file_path: Path) -> Response:
     try:
         if file_path.suffix.lower() not in [".pdf", ".txt"]:
@@ -33,17 +69,14 @@ def email_arquivo(file_path: Path) -> Response:
                 mensagem="Erro: Tipo de arquivo não suportado. Forneça um arquivo .pdf ou .txt.",
                 resultado=None,
             )
-
         reader = SimpleDirectoryReader(
             input_dir=file_path.parent, required_exts=[file_path.suffix]
         )
         documents = reader.load_data()
-
         texto_completo = ""
         for doc in documents:
             if Path(doc.metadata.get("file_path")).name == file_path.name:
                 texto_completo += doc.text + "\n"
-
         return Response(
             status="sucesso",
             mensagem="Arquivo lido com sucesso.",
@@ -62,15 +95,12 @@ def verificar_email(
     email_file_path: Optional[str] = None,
 ) -> Response:
     content = ""
-
     if email_text:
         content = email_text
     elif email_file_path:
         response_arquivo = email_arquivo(Path(email_file_path))
-
         if response_arquivo.status == "erro":
             return response_arquivo
-
         content = response_arquivo.resultado
     else:
         return Response(
@@ -84,15 +114,18 @@ def verificar_email(
             status="erro", mensagem="O conteúdo do e-mail está vazio.", resultado=None
         )
 
+    if NLP_PREPROCESSING:
+        print("INFO: Pré-processamento de NLP ativado.")
+        content = preprocessar_texto_nlp(content)
+        print(f"INFO: Conteúdo após NLP: {content}")
+
     try:
         template = """ Com base no e-mail fornecido abaixo, use a ferramenta 'Invoice' para extrair as informações solicitadas.
         ---
-        {content} 
+        {content}
         ---"""
         template = PromptTemplate(template)
-
         invoice_result = llm.structured_predict(Invoice, template, content=content)
-
         return Response(
             status="sucesso",
             mensagem="E-mail verificado e classificado com sucesso.",

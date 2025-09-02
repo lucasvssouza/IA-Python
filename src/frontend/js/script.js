@@ -7,6 +7,8 @@ $(document).ready(function () {
     const htmlElement = $('html');
     const resultsContainer = $('#results-container')
     const suggestedReply = $('#suggested-reply');
+    const classificationResult = $('#classification-result');
+    const classificationBadge = $('#classification-badge');
 
     // --- SCRIPT DE TEMA ---
     const setTheme = (theme) => {
@@ -119,8 +121,8 @@ $(document).ready(function () {
                     const classe = data.resultado.classe;
                     const classification = classe === 2 ? 'Produtivo' : 'Improdutivo';
                     const colors = ["bg-danger", "bg-success"]
-                    $('#classification-result').text(classification);
-                    $('#classification-badge').removeClass().addClass("rounded p-2 fs-6 " + colors[classe - 1]);
+                    classificationResult.text(classification);
+                    classificationBadge.removeClass().addClass("rounded p-2 fs-6 " + colors[classe - 1]);
                     suggestedReply.empty();
 
                     const textResult = (data.resultado.texto.split("\n"));
