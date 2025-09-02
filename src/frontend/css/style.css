@@ -1,0 +1,19 @@
+html,
+body {
+    min-width: 100%;
+    min-height: 100%;
+}
+
+.btn-invert {
+    background-color: transparent;
+    color: var(--bs-body-color); 
+    border: 2px solid var(--bs-border-color); 
+    
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-invert:hover {
+    background-color: var(--bs-body-color); 
+    color: var(--bs-body-bg);
+    border-color: var(--bs-body-color); 
+}
