@@ -87,10 +87,12 @@ pip install -r requirements.txt
 ```
 
 **4. Configure as Variáveis de Ambiente:**
-Crie um arquivo chamado `.env` na raiz do projeto, copiando o exemplo `.env.example` ou adicionando a seguinte linha:
+Crie um arquivo chamado `.env` na raiz do projeto, copiando o exemplo `.env.example` ou adicionando as seguintes linhas:
 
 ```
-GROQ_API_KEY="sua_chave_de_api_da_groq"
+GROQ_API_KEY= ## API KEY 
+NLP_PREPROCESSING=false ## ATIVAÇÃO DO NLP
+NLP_LANGUAGE="portuguese" ## TRADUÇÃO DO NLP
 ```
 
 *Substitua `sua_chave_de_api_da_groq` pela sua chave de API real.*
