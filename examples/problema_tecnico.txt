@@ -1,0 +1,10 @@
+Assunto: URGENTE: Erro ao aceder ao portal do cliente
+
+Bom dia,
+
+Desde as 9h de hoje não consigo aceder ao portal do cliente para emitir novas faturas. O sistema apresenta o erro "503 - Serviço Indisponível".
+
+Já tentei limpar a cache e usar outro navegador, sem sucesso. Podem verificar o que se passa? É uma funcionalidade crítica para as nossas operações diárias.
+
+Atenciosamente,
+Ana Silva
