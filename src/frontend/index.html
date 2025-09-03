@@ -54,20 +54,17 @@
             <!-- Formulário para envio dos dados do e-mail -->
 
             <!-- Secção para exibir os resultados da análise -->
-            <section id="result-section" class="mt-5 d-none">
-                <h2 class="text-center mb-3">Resultado da Análise</h2>
-                <div class="alert alert-info">
-                    <strong>Classificação:</strong> <span id="classification-result" class="badge fs-6"></span>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <strong>Resposta Sugerida:</strong>
-                    </div>
-                    <div class="card-body">
-                        <p id="suggested-reply" class="mb-0"></p>
-                    </div>
-                </div>
-            </section>
+            <div id="results-container" class="d-none mt-4 card p-3">
+                <h2 class="mb-3">Resultado da Análise</h2>
+                <p id="classification-badge"><strong>Classificação:</strong> <span id="classification-result"></span>
+                </p>
+                <p><strong>Resposta Sugerida:</strong></p>
+                <div id="suggested-reply"></div>
+            </div>
+
+            <div id="loading-indicator" class="d-none">
+                <p>Analisando e-mail...</p>
+            </div>
             <!-- Secção para exibir os resultados da análise -->
         </div>
 
