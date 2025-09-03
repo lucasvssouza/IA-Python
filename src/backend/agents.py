@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Inicializa o cliente do modelo de linguagem grande (LLM) da Groq.
-llm = Groq(model="gemma2-9b-it", temperature=0.0)
+llm = Groq(model="openai/gpt-oss-120b", temperature=0.0)
 # --- Configuração Inicial ---
 
 
